@@ -1,0 +1,106 @@
+package tp_reseauxRoutier;
+
+public class RouteConcrete implements Route {
+	
+
+	private double distance;
+	private Ville ville1;
+	private Ville ville2;
+
+	public String toString() {
+		String resultat = super.toString();
+		resultat += ville1;
+		resultat += ville2;
+		resultat += distance;
+		return resultat;
+	}
+	public RouteConcrete(Ville v, Ville w, double distance) {
+		this.ville1 = v;
+		this.ville2 = w;
+		this.distance = distance;
+	}
+	
+	public RouteConcrete(Route r, Route s) {
+		if (!s.appartient(r.ville1())) {
+			this.ville1() = r.ville1();
+		}else
+		{
+			this.ville1() = r.ville2();	
+		}
+		if (!r.appartient(s.ville1())) {
+			this.ville2() = s.ville1();
+		}else
+		{
+			this.ville2() = s.ville2();
+		}
+		
+	}
+	
+
+	@Override
+	public Ville ville1() {
+		return ville1;
+	}
+
+	@Override
+	public Ville ville2() {
+		return ville2;
+	}
+
+	@Override
+	public double distance() {
+		return distance;
+	}
+
+	@Override
+	public boolean appartient(Ville v) {	
+		if (v.memeVille(this.ville1()) || v.memeVille(this.ville2())) {
+			return true;
+		}
+		else
+			{
+			return false;
+			}
+	}
+
+	@Override
+	public boolean ontMemesVilles(Route r) {
+		if (this.appartient(r.ville1()) && this.appartient(r.ville2())){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean memeRoute(Route r) {
+		if (this.ontMemesVilles(r) && this.distance() == r.distance()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean meilleur(Route r) {
+		if (r.distance() < this.distance()) {
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	@Override
+	public boolean seSuivent(Route r) {
+		if (this.memeRoute(r)==false && this.ontMemesVilles(r)==true) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+}

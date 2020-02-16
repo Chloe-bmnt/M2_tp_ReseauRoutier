@@ -1,0 +1,47 @@
+package RoutesBuilder;
+
+public class VilleConcrete implements Ville {
+	String nom;
+	int population;
+	
+	
+	public VilleConcrete(String nom, int population)
+	{
+		this.nom = nom;
+		this.population = population;
+		
+	}
+	
+	public String toString()
+	{
+	    return nom+ " (" +population+ ")";
+	}
+	
+	@Override
+	public String nom() 
+	{
+		return nom;
+	}
+
+	@Override
+	public int population()
+	{
+		return population;
+	}
+
+	@Override
+	public boolean memeVille(Ville v) {
+		if(v.nom() == this.nom && v.population() == this.population)
+		{
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

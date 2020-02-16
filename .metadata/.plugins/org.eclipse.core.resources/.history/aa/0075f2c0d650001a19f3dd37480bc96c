@@ -1,0 +1,17 @@
+package RoutesBuilder;
+
+import java.util.List;
+
+public interface Reseau extends Iterable<Route> {
+	int taille();
+	List<Route> routes();
+	List<Route> routes(Ville v);
+	Route route(int i);
+	void ajouterRoute(Route r);
+	boolean estDans(Route r);
+	boolean bonneRoute(Route r);
+	Reseau produitRoutes(Reseau res);
+	Reseau  unionReseaux(Reseau  res);
+	Reseau chemin3();
+	Reseau chemins();
+}

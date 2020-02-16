@@ -1,0 +1,45 @@
+package tp_reseauxRoutier;
+
+public class VilleConcrete implements Ville {
+
+	private String nom;
+	private int population;
+
+	public String toString() {
+		String resultat = new String();
+		resultat += this.nom();
+		resultat += "(" + this.population() + ")";
+		return resultat;
+	}
+	
+	public VilleConcrete(String nom, int population) {
+		this.nom = nom;
+		this.population = population;
+	}
+
+	@Override
+	public String nom() {
+		
+		return nom;
+	}
+
+	@Override
+	public int population() {
+		
+		return population;
+	}
+
+	@Override
+	public boolean memeVille(Ville v) {
+		if (this.nom() == v.nom() && this.population() == v.population()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	
+
+}
+

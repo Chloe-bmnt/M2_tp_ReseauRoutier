@@ -1,0 +1,149 @@
+package RoutesBuilder;
+
+public class RouteConcrete implements Route {
+	Ville ville1;
+	Ville ville2;
+	double longueur;
+	
+	public RouteConcrete(Ville v, Ville w, double distance)
+	{
+		ville1 = v;
+		ville2 = w;
+		longueur = distance;
+	}
+	
+	public RouteConcrete(Route r, Route s)
+	{	
+		//ville1 de s dans les villes de la route r ? Si non à joindre
+		if (!r.appartient(s.ville1())) 
+		{
+			ville1 = s.ville1();
+		}
+		else
+		{
+			ville1 = s.ville2();
+		}
+		
+		// pareil pour les villes de la route r
+		if (!s.appartient(r.ville1()))
+		{
+			ville2 = r.ville1();
+		}
+		else
+		{
+			ville2 = r.ville2();
+		}
+		
+        longueur = r.distance() + s.distance();
+	}
+	
+	public String toString()
+	{
+		Ville v1 = this.ville1();
+		return v1+ " - " +this.ville2().toString()+ " : " +longueur+ "m\n";
+	}
+	
+	@Override
+	public Ville ville1()
+	{
+		return this.ville1;
+	}
+
+	@Override
+	public Ville ville2() 
+	{
+		return this.ville2;
+	}
+
+	@Override
+	public double distance() 
+	{
+		return longueur;
+	}
+
+	@Override
+	public boolean appartient(Ville v)
+	{	
+		if (v == this.ville1 || v == this.ville2)
+		{
+			return true;
+		}else 
+		{
+			return false;
+		}
+	}
+
+	@Override
+	public boolean ontMemesVilles(Route r) {
+		if(appartient(r.ville1())==true && appartient(r.ville2())==true)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean memeRoute(Route r)
+	{
+		// distances ajoutees
+		if (r.ville1() == this.ville1 && r.ville2() == this.ville2 && r.distance() == this.longueur) 
+		{
+			return true;
+			
+		}else if (r.ville1() == this.ville2 && r.ville2() == this.ville1 && r.distance() == this.longueur) 
+		{
+			return true;
+			
+		}else
+		{
+			return false;
+		}
+	}
+
+	@Override
+	public boolean meilleur(Route r) {
+		if (r.distance() < this.distance())
+		{
+			return true;
+
+		}else 
+		{
+			return false;
+		}
+		
+	}
+
+	@Override
+	public boolean seSuivent(Route r) 
+	{
+		if (appartient(r.ville1()) && !appartient(r.ville2()))
+		{
+			return true;
+			
+		}else if (!appartient(r.ville1()) && appartient(r.ville2()))
+		{
+			return true;
+			
+		}else
+		{
+			return false;
+		}
+	}
+
+	public static void main(String[] args) {
+		Ville arras = new VilleConcrete("Arras", 40721);
+        Ville nantes = new VilleConcrete("Nantes", 303382);
+        Ville strasbourg = new VilleConcrete("Strasbourg", 277270);
+        Ville paris = new VilleConcrete("Paris", 2220445);
+        Route ArSt = new RouteConcrete(arras, strasbourg, 522);
+        Route Star = new RouteConcrete(strasbourg, arras, 522);
+        Route ArNa = new RouteConcrete(arras, nantes, 571);
+        Route ArPa = new RouteConcrete(arras, paris, 185);
+        
+        System.out.println(Star.ontMemesVilles(ArSt));
+        System.out.println(ArSt.ontMemesVilles(ArSt));
+        System.out.println(ArNa.ontMemesVilles(ArPa));
+        System.out.println(Star.appartient(arras));
+	}
+
+}

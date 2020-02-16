@@ -1,0 +1,69 @@
+package tp_reseauxRoutier;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ReseauConcret implements Reseau {
+
+
+	private int taille;
+	private List<Route> list;
+	
+
+	public String toString() {
+		return r.toString".";
+	}
+	
+	public ReseauConcret() {
+		list = new ArrayList<Route>();
+		
+	}
+
+
+	@Override
+	public int taille() {
+		return this.list.size();
+	}
+
+	@Override
+	public List<Route> routes() {
+		return this.list;
+	}
+
+	@Override
+	public List routes(Ville v) {
+		
+		return this.routes(v);
+	}
+
+	@Override
+	public Route route(int i) {
+		
+		return null;
+	}
+
+	@Override
+	public void ajouterRoute(Route r) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean estDans(Route r) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean bonneRoute(Route r) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void unionRseaux(Reseau res) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

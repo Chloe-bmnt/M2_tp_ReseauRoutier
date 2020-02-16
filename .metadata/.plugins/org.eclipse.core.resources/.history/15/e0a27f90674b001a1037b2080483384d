@@ -1,0 +1,105 @@
+package tp_reseauxRoutier;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ReseauConcret implements Reseau {
+
+
+	private int taille;
+	private List<Route> list;
+	
+	
+	
+
+	public String toString() {
+		String resultatRoutes = new String();
+		for(Route route:routes()) {
+			resultatRoutes += route.toString()+".";
+		}
+		return resultatRoutes;
+	}
+	
+	public ReseauConcret() {
+		list = new ArrayList<Route>();
+		
+	}
+
+
+	@Override
+	public int taille() {
+		return this.list.size();
+	}
+
+	@Override
+	public List<Route> routes() {
+		return this.list;
+	}
+
+	@Override
+	public List<Route> routes(Ville v) {
+		Reseau reseauVille = new ReseauConcret();
+		for (Route route:routes()) {
+			if (route.appartient(v)) {
+				reseauVille.ajouterRoute(route);
+			}
+		}
+		return reseauVille.routes();
+	}
+
+	@Override
+	public Route route(int i) {
+		for(int j=0; i<list.size(); j++) {
+			if(i==j) {
+				return this.list.get(i);
+			}
+		}
+	}
+
+	@Override
+	public void ajouterRoute(Route r) {
+		this.list.add(r);
+		
+	}
+
+	@Override
+	public boolean estDans(Route r) {
+		return(this.list.contains(r));
+	}
+
+	@Override
+	public boolean bonneRoute(Route r) {
+		for(Route route:routes()) {
+			if(route.ontMemesVilles(r)) {
+				if(route.distance() < r.distance()) {
+					return true;
+				}else {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Reseau unionReseaux(Reseau res) {
+		Reseau unionReseau = this;
+		for(Route routeRes:res.routes()) {
+			if(this.estDans(routeRes)) {
+				if(bonneRoute(routeRes)) {
+					unionReseau.ajouterRoute(routeRes);
+				}
+			}else {
+				unionReseau.ajouterRoute(routeRes);
+			}
+		for(Route routeThis:this.routes()) {
+			if(!res.estDans(routeThis)) {
+				unionReseau.ajouterRoute(routeThis);
+			}
+		}
+		}
+		return unionReseau;
+	}
+}
+
+

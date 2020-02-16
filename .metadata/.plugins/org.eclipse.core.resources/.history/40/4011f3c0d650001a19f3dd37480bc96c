@@ -1,0 +1,12 @@
+package RoutesBuilder;
+
+public interface Ville {
+	
+	String nom();
+	int population();
+	boolean memeVille(Ville v);
+	String toString();
+	
+}
+
+

@@ -1,0 +1,152 @@
+package tp_reseauxRoutier;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class ReseauConcret implements Reseau {
+
+
+	private int taille;
+	private List<Route> listRoute;
+	
+	
+	
+
+	public String toString() {
+		String resultatRoutes = new String();
+		for(Route route:routes()) {
+			resultatRoutes += route.toString()+".";
+		}
+		return resultatRoutes;
+	}
+	
+	public ReseauConcret() {
+		listRoute = new ArrayList<Route>();
+		
+	}
+
+
+	@Override
+	public int taille() {
+		return this.listRoute.size();
+	}
+
+	@Override
+	public List<Route> routes() {
+		return this.listRoute;
+	}
+
+	@Override
+	public List<Route> routes(Ville v) {
+		Reseau reseauVille = new ReseauConcret();
+		for (Route route:routes()) {
+			if (route.appartient(v)) {
+				reseauVille.ajouterRoute(route);
+			}
+		}
+		return reseauVille.routes();
+	}
+
+	@Override
+	public Route route(int i) {
+		for(int j=0; i<listRoute.size(); j++) {
+			if(i==j) {
+				return this.listRoute.get(i);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void ajouterRoute(Route r) {
+		this.listRoute.add(r);
+		
+	}
+
+	@Override
+	public boolean estDans(Route r) {
+		return(this.listRoute.contains(r));
+	}
+
+	@Override
+	public boolean bonneRoute(Route r) {
+		for(Route route:routes()) {
+			if(route.ontMemesVilles(r)) {
+				if(route.distance() < r.distance()) {
+					return true;
+				}else {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Reseau unionReseaux(Reseau res) {
+		Reseau unionReseau = this;
+		for(Route routeRes:res.routes()) {
+			if(this.estDans(routeRes)) {
+				if(bonneRoute(routeRes)) {
+					unionReseau.ajouterRoute(routeRes);
+				}
+			}else {
+				unionReseau.ajouterRoute(routeRes);
+			}
+		for(Route routeThis:this.routes()) {
+			if(!res.estDans(routeThis)) {
+				unionReseau.ajouterRoute(routeThis);
+			}
+		}
+		}
+		return unionReseau;
+	}
+	
+	@Override
+	public Reseau produitRoutes(Reseau res) {
+		Reseau produitRoutes = new ReseauConcret();
+		for(Route routeThis:this.routes()) {
+			for(Route routeRes:res.routes()) {
+				if(routeThis.seSuivent(routeRes)) {
+					Route r = new RouteConcrete(routeRes, routeThis);
+					produitRoutes.ajouterRoute(r);
+				}
+			}
+		}
+		return produitRoutes;
+	}
+	
+	@Override
+	public Reseau chemins3() {
+		Reseau reseau = this;
+		Reseau chemins3 = this;
+		for(int i=0; i<2; i++) {
+			reseau = this.produitRoutes(chemins3);
+			chemins3 = chemins3.unionReseaux(reseau);
+		}
+		return chemins3;
+		
+		
+	}
+	
+	@Override
+	public Reseau chemins() {
+		Reseau reseau = this;
+		Reseau chemins = this;
+		for(int i=0; i<reseau.taille(); i++) {
+			reseau = this.produitRoutes(chemins);
+			chemins = chemins.unionReseaux(reseau);
+		}
+		return chemins;
+		
+	}
+
+	@Override
+	public Iterator<Route> iterator() {
+		
+		return this.routes().iterator();
+	}
+}
+
+

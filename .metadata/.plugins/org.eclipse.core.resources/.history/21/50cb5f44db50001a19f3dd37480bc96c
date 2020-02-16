@@ -1,0 +1,243 @@
+package tp_reseauxRoutier;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class ReseauConcret implements Reseau {
+
+	private List<Route> listRoute;
+	
+	
+	
+
+	public String toString() {
+		String resultatRoutes = new String();
+		for(Route route:routes()) {
+			resultatRoutes += route.toString();
+			
+		}
+		return resultatRoutes;
+	}
+	
+	public ReseauConcret() {
+		this.listRoute = new ArrayList<Route>();
+		
+	}
+	
+	public ReseauConcret(List<Route> listOther) {
+		this.listRoute = new ArrayList<Route>();
+		
+		for(Route route:listOther) {
+			this.ajouterRoute(route);
+			
+		}
+	}
+
+
+	@Override
+	public int taille() {
+		return this.listRoute.size();
+	}
+
+	@Override
+	public List<Route> routes() {
+		return this.listRoute;
+	}
+
+	@Override
+	public List<Route> routes(Ville v) {
+		Reseau reseauVille = new ReseauConcret();
+		for (Route route:routes()) {
+			if (route.appartient(v)) {
+				reseauVille.ajouterRoute(route);
+			}
+		}
+		return reseauVille.routes();
+	}
+
+	@Override
+	public Route route(int i) {
+		return this.listRoute.get(i);
+	}
+
+	@Override
+	public void ajouterRoute(Route r) {
+		this.listRoute.add(r);
+		
+	}
+
+	@Override
+	public boolean estDans(Route r) {
+		return(this.listRoute.contains(r));
+	}
+
+	@Override
+	public boolean bonneRoute(Route r) {
+		for(Route route:this.routes()) {
+			if(route.ontMemesVilles(r)==true && route.meilleur(r)==false) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public Reseau unionReseaux(Reseau res) {
+		Reseau routeToRemove = new ReseauConcret();
+		Reseau unionReseau = this;
+		for(Route routeRes:res.routes()) {
+			if(!unionReseau.estDans(routeRes)) {
+				if(unionReseau.bonneRoute(routeRes)) {
+					for(Route route:this.routes()) {
+						if(route.ontMemesVilles(routeRes)) {
+							routeToRemove.ajouterRoute(route);
+						}
+					
+					unionReseau.ajouterRoute(routeRes);
+					
+					}
+				}
+			}
+		}
+		for(Route routeTR:routeToRemove.routes()) {
+			unionReseau.routes().remove(routeTR);
+		}
+		return unionReseau;
+	}
+	
+	@Override
+	public Reseau produitRoutes(Reseau res) {
+		Reseau produit_reseau = new ReseauConcret();
+		Reseau reseau_surplus = new ReseauConcret();
+		
+		for(Route route_this:this.routes())
+		{
+			for(Route route_res:res.routes())
+			{
+				if(route_res.seSuivent(route_this))
+				{
+					Route new_route = new RouteConcrete(route_res, route_this);
+					if(produit_reseau.bonneRoute(new_route) && 
+							!produit_reseau.estDans(new_route))
+					{
+						for(Route produit_route:produit_reseau)
+						{
+							if(produit_route.ontMemesVilles(new_route))
+							{
+								reseau_surplus.ajouterRoute(produit_route);
+							}
+						}
+						produit_reseau.ajouterRoute(new_route);
+					}
+				}
+			}
+		}
+		for(Route route:reseau_surplus.routes())
+		{
+			produit_reseau.routes().remove(route);
+		}
+		return produit_reseau;
+	}
+//	public Reseau produitRoutes(Reseau res) {
+//		Reseau produitRoutes = new ReseauConcret();
+//		for(Route routeThis:this.routes()) {
+//			for(Route routeRes:res.routes()) {
+//				if(routeThis.seSuivent(routeRes)) {
+//					Route r = new RouteConcrete(routeRes, routeThis);
+//					if(produitRoutes.bonneRoute(r) && !produitRoutes.estDans(r)) {
+//						produitRoutes.ajouterRoute(r);
+//					}
+//				}
+//			}
+//		}
+//		return produitRoutes;
+//	}
+	
+	@Override
+	public Reseau chemins3() {
+		Reseau reseau = new ReseauConcret();
+		Reseau chemins3 = new ReseauConcret(this.routes());
+		for(int i=0; i<2; i++) {
+			reseau = this.produitRoutes(chemins3);
+			chemins3 = chemins3.unionReseaux(reseau);
+		}
+		return chemins3;
+		
+		
+	}
+	
+	@Override
+	public Reseau chemins() {
+		Reseau reseau = new ReseauConcret();
+		Reseau chemins = new ReseauConcret(this.routes());
+		for(int i=0; i<this.taille(); i++) {
+			reseau = this.produitRoutes(chemins);
+			chemins = chemins.unionReseaux(reseau);
+		}
+		return chemins;
+		
+	}
+
+	@Override
+	public Iterator<Route> iterator() {
+		
+		return this.routes().iterator();
+	}
+	
+	public static void main(String[] args) {
+        Ville arras = new VilleConcrete("Arras", 40721);
+        Ville nantes = new VilleConcrete("Nantes", 303382);
+        Ville strasbourg = new VilleConcrete("Strasbourg", 277270);
+        Ville paris = new VilleConcrete("Paris", 2220445);
+        Ville brest = new VilleConcrete("Brest", 139163);
+        Ville lyon = new VilleConcrete("Lyon", 513275);
+        Ville poitiers = new VilleConcrete("Poitiers", 87918);
+        Ville bordeaux = new VilleConcrete("Bordeaux", 249712);
+        Ville montpellier = new VilleConcrete("Montpellier", 277639);
+        Ville marseille = new VilleConcrete("Marseille", 861635);
+        
+        Route ArSt = new RouteConcrete(arras, strasbourg, 522);
+        Route ArNa = new RouteConcrete(arras, nantes, 561);
+        Route ArPa = new RouteConcrete(arras, paris, 185);
+        Route NaBr = new RouteConcrete(nantes, brest, 298);
+        Route NaPa = new RouteConcrete(nantes, paris, 386);
+        Route BrPa = new RouteConcrete(brest, paris, 593);
+        Route StLy = new RouteConcrete(strasbourg, lyon, 494);
+        Route PaLy = new RouteConcrete(paris, lyon, 465);
+        Route NaBo = new RouteConcrete(nantes, bordeaux, 334);
+        Route PaPo = new RouteConcrete(paris, poitiers, 338);
+        Route BoPo = new RouteConcrete(bordeaux, poitiers, 237);
+        Route PoMo = new RouteConcrete(poitiers, montpellier, 557);
+        Route MoLy = new RouteConcrete(montpellier, lyon, 303);
+        Route MoMa = new RouteConcrete(montpellier, marseille, 171);
+        Route MoSt = new RouteConcrete(montpellier, strasbourg, 797);
+        Route MaSt = new RouteConcrete(marseille, strasbourg, 809);
+        Route LyMa = new RouteConcrete(lyon, marseille, 315);
+        
+        Reseau res = new ReseauConcret();
+        res.ajouterRoute(ArSt);
+        res.ajouterRoute(ArNa);
+        res.ajouterRoute(ArPa);
+        res.ajouterRoute(NaBr);
+        res.ajouterRoute(NaPa);
+        res.ajouterRoute(BrPa);
+        res.ajouterRoute(StLy);
+        res.ajouterRoute(PaLy);
+        res.ajouterRoute(NaBo);
+        res.ajouterRoute(PaPo);
+        res.ajouterRoute(BoPo);
+        res.ajouterRoute(PoMo);
+        res.ajouterRoute(MoLy);
+        res.ajouterRoute(MoMa);
+        res.ajouterRoute(MoSt);
+        res.ajouterRoute(MaSt);
+        res.ajouterRoute(LyMa);
+        
+        System.out.println(res.chemins3().toString());
+        System.out.println(res.chemins3().taille());
+
+    }
+}
+
+
